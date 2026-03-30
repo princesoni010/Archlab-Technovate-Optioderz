@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="Archlab: AI-Powered Structural Consultant - Transform floor plans into 3D models with cost estimates">
+  <title>Archlab | AI-Powered Structural Consultant</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script>window.jsPDF = window.jspdf.jsPDF;</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+  <link rel="stylesheet" href="../src/styles.css">
+</head>
+
+<body>
+
+  <!-- ===== SECTION 1: LANDING PAGE ===== -->
+  <div id="landingPage">
+    <nav class="navbar">
+      <span class="nav-logo">⬡ Archlab</span>
+      <span class="nav-center">Structural AI Consultant | Hackathon 2025</span>
+      <div style="display:flex;gap:12px;align-items:center">
+        <button class="btn-ghost" onclick="showAIPage()" style="padding:9px 20px;font-size:13px">🤖 AI
+          Assistant</button>
+        <button class="btn-primary" onclick="showApp()">Launch App →</button>
+      </div>
+    </nav>
+
+    <section class="hero">
+      <canvas id="particleCanvas"></canvas>
+      <div class="hero-content">
+        <h1>Transform Any Floor Plan into a Smart 3D Structure</h1>
+        <p>Upload your 2D blueprint. Get instant 3D visualization, AI material recommendations with live prices, and a
+          complete construction cost estimate.</p>
+        <div class="hero-btns">
+          <button class="btn-primary" onclick="showApp()" style="font-size:16px;padding:14px 32px">Upload Floor Plan
+            →</button>
+          <button class="btn-ghost" onclick="document.getElementById('howItWorks').scrollIntoView({behavior:'smooth'})"
+            style="padding:14px 32px">See How It Works ▶</button>
+        </div>
+        <div class="trust-badges">
+          <span class="badge-pill">⬡ Blockchain Verified</span>
+          <span class="badge-pill">◈ AI-Powered Analysis</span>
+          <span class="badge-pill">◉ Live Material Prices</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Everything you need to build smarter</h2>
+      <p class="section-sub">From a blurry photo to a certified cost estimate.</p>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="icon">🖼️</div>
+          <h3>Smart Image Scanning</h3>
+          <p>Upload any 2D floor plan photo. Our scanner detects walls, rooms, doors, and dimensions automatically using
+            edge detection.</p>
+        </div>
+        <div class="feature-card">
+          <div class="icon">🏗️</div>
+          <h3>Instant 3D Conversion</h3>
+          <p>One click converts your scanned 2D plan into a fully interactive 3D model. Each room gets a unique color
+            for easy identification.</p>
+        </div>
+        <div class="feature-card">
+          <div class="icon">🧱</div>
+          <h3>Clickable Wall Analysis</h3>
+          <p>Click any wall in the 3D model to instantly see recommended brick type, cement grade, and current market
+            prices.</p>
+        </div>
+        <div class="feature-card">
+          <div class="icon">💰</div>
+          <h3>Live Price Intelligence</h3>
+          <p>Material prices update based on region. See current rates for Red Brick, AAC Block, Cement, TMT Steel Rod,
+            and River Sand.</p>
+        </div>
+        <div class="feature-card">
+          <div class="icon">📊</div>
+          <h3>Total Cost Estimator</h3>
+          <p>Get a full construction breakdown — total bricks, cement bags, steel rods, labor cost — with grand total in
+            Indian Rupees.</p>
+        </div>
+        <div class="feature-card">
+          <div class="icon">🎨</div>
+          <h3>AI Room Visualizer</h3>
+          <p>Generate a visual preview of how any room will look when fully constructed and furnished after cost
+            analysis.</p>
+        </div>
+        <div class="feature-card"
+          style="border-color:rgba(34,211,238,.3);background:linear-gradient(135deg,rgba(34,211,238,.07),rgba(15,23,42,0))">
+          <div class="icon">⛓️</div>
+          <h3 style="color:#22d3ee">Blockchain Verification</h3>
+          <p>Every structural audit is SHA-256 hashed and broadcast to the <strong style="color:#22d3ee">Stellar
+              Testnet</strong> — creating an immutable, tamper-proof certificate of your construction data.</p>
+          <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">
+            <span
+              style="padding:3px 9px;border-radius:50px;font-size:11px;font-weight:700;background:rgba(34,211,238,.12);border:1px solid rgba(34,211,238,.3);color:#22d3ee">⬡
+              Stellar Network</span>
+            <span
+              style="padding:3px 9px;border-radius:50px;font-size:11px;font-weight:700;background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.3);color:#a78bfa">🔐
+              SHA-256</span>
+            <span
+              style="padding:3px 9px;border-radius:50px;font-size:11px;font-weight:700;background:rgba(74,222,128,.12);border:1px solid rgba(74,222,128,.3);color:#4ade80">✅
+              Immutable</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="howItWorks">
+      <h2 class="section-title">How Archlab works</h2>
+      <p class="section-sub">Five simple steps from blueprint to budget</p>
+      <div class="steps-flow">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="icon">📤</div>
+          <h4>Upload</h4>
+          <p>Upload your 2D floor plan image (JPG/PNG)</p>
+        </div>
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="icon">🔍</div>
+          <h4>Scan</h4>
+          <p>AI scans and detects all walls and room boundaries</p>
+        </div>
+        <div class="step-item">
+          <div class="step-num">3</div>
+          <div class="icon">🏗️</div>
+          <h4>Build 3D</h4>
+          <p>One click converts plan to colorful 3D model</p>
+        </div>
+        <div class="step-item">
+          <div class="step-num">4</div>
+          <div class="icon">🖱️</div>
+          <h4>Click &amp; Analyze</h4>
+          <p>Click any wall for material recommendations and prices</p>
+        </div>
+        <div class="step-item">
+          <div class="step-num">5</div>
+          <div class="icon">📊</div>
+          <h4>Cost Report</h4>
+          <p>Generate full construction cost with PDF export</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="tech-badges">
+      <span class="tech-badge">Three.js — 3D Engine</span>
+      <span class="tech-badge">Canvas API — Wall Detection</span>
+      <span class="tech-badge">Stellar — Blockchain</span>
+      <span class="tech-badge">Web Crypto — SHA-256</span>
+      <span class="tech-badge">jsPDF — Reports</span>
+      <span class="tech-badge">Vanilla JS — Zero Framework</span>
+    </div>
+
+    <section class="section">
+      <div class="cta-block">
+        <h2>Ready to build your dream home smarter?</h2>
+        <p>Join architects, engineers and home builders using AI to make better construction decisions.</p>
+        <button class="btn-primary" onclick="showApp()" style="font-size:16px;padding:14px 36px">Launch Archlab Now
+          →</button>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <span>© 2025 Archlab. Built for Hackathon 2025.</span>
+      <span>Features | How It Works | Tech Stack</span>
+      <span>Powered by Stellar Blockchain ⬡</span>
+    </footer>
+  </div>
+
+  <!-- ===== SECTION 3: AI ASSISTANT PAGE ===== -->
+  <div id="aiPage" class="full-page-ai" style="display:none">
+    <nav class="ai-page-nav">
+      <button class="back-link" onclick="showLanding()">← Back to Home</button>
+      <div class="ai-brand">
+        <span class="ai-logo">✨</span>
+        <div class="ai-brand-text">
+          <div class="ai-name">Archlab AI Assistant</div>
+          <div class="ai-status">Groq Llama 3 · Online</div>
+        </div>
+      </div>
+      <button class="btn-primary" onclick="showApp()">Structural App →</button>
+    </nav>
+
+    <div class="ai-container">
+      <!-- SIDEBAR -->
+      <aside class="ai-side">
+        <div class="ai-side-hdr">Capabilities</div>
+        <div class="ai-task-list">
+          <div class="ai-task" onclick="aiQuickQuery('What materials are best for earthquake safety?')">🧱 Earthquake
+            Resilience</div>
+          <div class="ai-task" onclick="aiQuickQuery('Explain the difference between RCC and brick structure')">🏗️
+            Structural Logic</div>
+          <div class="ai-task" onclick="aiQuickQuery('Which cement is better: OPC or PPC?')">💧 Cement Selection</div>
+          <div class="ai-task" onclick="aiQuickQuery('How to save costs in residential building?')">💰 Cost Optimization
+          </div>
+          <div class="ai-task" onclick="aiQuickQuery('What are Indian building codes for walls?')">📜 IS Code Guide
+          </div>
+        </div>
+        <div class="ai-side-divider"></div>
+        <div class="ai-side-hdr">History</div>
+        <div style="color:var(--muted);font-size:12px;padding:10px">No recent chats yet.</div>
+      </aside>
+
+      MAIN CHAT
+      <main class="ai-main">
+        <div class="ai-chat-header">
+          <div class="ai-chat-icon">🤖</div>
+          <div>
+            <strong>Structural Intelligence Bot</strong>
+            <p style="font-size:11px;color:rgba(255,255,255,0.4)">Ask me about costs, materials, or structural safety.
+            </p>
+          </div>
+        </div>
+
+        <div class="ai-messages" id="aiMessages">
+          <div class="ai-msg ai-msg-bot">
+            <div class="ai-msg-avatar">AL</div>
+            <div class="ai-msg-bubble">
+              Hello! I am Archlab AI. I can help you understand structural requirements and estimate construction costs.
+              What's on your mind today?
+            </div>
+          </div>
+        </div>
+
+        <div class="ai-typing" id="aiTypingIndicator" style="display:none">
+          <span></span><span></span><span></span>
+        </div>
+
+        <div class="ai-input-wrap">
+          <textarea id="aiInput" placeholder="Type your construction query here..."
+            onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();aiChatSubmit()}"></textarea>
+          <button class="ai-send-btn" onclick="aiChatSubmit()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
+            </svg>
+          </button>
+        </div>
+      </main>
+
+      <!-- INFO PANEL -->
+      <aside class="ai-info">
+        <div class="ai-info-box">
+          <h3>Domain Expert</h3>
+          <p>Trained on 10,000+ structural blueprints and Indian Standard (IS) codes for high-precision auditing.</p>
+        </div>
+        <div class="ai-info-box" style="border-color:rgba(34,211,238,0.2)">
+          <h3>Cost Intelligence</h3>
+          <p>Live regional pricing for Mumbai, Delhi, Bangalore and more to ensure budgets are ±5% accurate.</p>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- ===== SECTION 2: APP DASHBOARD ===== -->
+  <div id="appSection" class="app-section">
+    <nav class="app-nav">
+      <button class="back-btn" onclick="showLanding()">← Back</button>
+      <span class="nav-logo">⬡ Archlab</span>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <button class="btn-set-prices" onclick="pnOpenPrices()">💰 Set Prices</button>
+        <button class="btn-ai-analysis" onclick="pnOpenAnalysis()">⚖️ AI Analysis</button>
+        <button class="btn-bc-full" onclick="pnOpenBcModal()">⛓️ Blockchain</button>
+        <button class="btn-ghost" onclick="showAIPage()"
+          style="padding:6px 14px;font-size:12px;border-radius:6px;border-color:rgba(34,211,238,0.4);border-width:1.5px">✨
+          Assistant</button>
+        <span class="status-pill" id="systemStatus">● System Ready</span>
+      </div>
+    </nav>
+    <div class="app-grid">
+
+      <!-- LEFT PANEL -->
+      <div class="panel" id="leftPanel">
+        <div class="panel-title">Input Hub</div>
+        <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+          <div class="uz-icon">📁</div>
+          <p><b>Drop your floor plan here</b><br>JPG, PNG supported</p>
+        </div>
+        <input type="file" id="fileInput" accept="image/*" style="display:none"
+          onchange="handleImageUpload(this.files[0])">
+        <div class="or-sep">— OR —</div>
+        <button class="btn-scan" onclick="startCamera()"
+          style="background:var(--dark2);color:var(--text);border:1px solid var(--glass-border);margin-bottom:8px">📸
+          Use Camera</button>
+        <video id="cameraFeed" autoplay muted playsinline
+          style="display:none;width:100%;border-radius:8px;margin:8px 0"></video>
+        <button id="captureBtn" style="display:none" class="btn-scan" onclick="captureFromCamera()">📸 Take
+          Photo</button>
+
+        <div class="dim-form" id="dimForm">
+          <div class="panel-title" style="margin-top:12px">Enter Dimensions</div>
+          <div class="dim-row">
+            <div><label>Wall Height (ft)</label><input type="number" id="wallHeight" placeholder="10" value="10"></div>
+            <div><label>Wall Thickness (in)</label><input type="number" id="wallThickness" placeholder="9" value="9">
+            </div>
+          </div>
+          <label>Region / City</label>
+          <select id="userRegion">
+            <option>Mumbai</option>
+            <option>Delhi</option>
+            <option>Bangalore</option>
+            <option>Chennai</option>
+            <option>Hyderabad</option>
+            <option>Pune</option>
+            <option>Kolkata</option>
+            <option>Other</option>
+          </select>
+          <button class="btn-scan" onclick="scanFloorPlan()">🔍 Scan Floor Plan</button>
+        </div>
+
+        <div class="sample-plans">
+          <div class="panel-title">Or load a sample plan</div>
+          <button onclick="loadSample('2bhk-simple')">2BHK Simple</button>
+          <button onclick="loadSample('2bhk-complex')">2BHK Complex</button>
+          <button onclick="loadSample('villa')">L-Shape Villa</button>
+        </div>
+        <div class="status-display" id="statusDisplay">
+          <div class="status-dot"></div><span>⏳ Waiting for upload...</span>
+        </div>
+      </div>
+
+      <!-- CENTER PANEL -->
+      <div class="panel center-panel" id="centerPanel">
+        <div class="tabs-bar">
+          <button class="tab-btn active" onclick="showTab('scan')">2D Scan View</button>
+          <button class="tab-btn" onclick="showTab('3d')">3D Model</button>
+          <button class="tab-btn" onclick="showTab('cost')">Cost Report</button>
+        </div>
+        <div class="tab-content">
+          <div class="tab-pane active" id="tabScan" style="align-items:center">
+            <canvas id="scanCanvas" width="700" height="500"></canvas>
+            <button class="btn-convert" id="convertBtn" style="display:none" onclick="convert3D()">🏗️ Convert to 3D
+              Model →</button>
+          </div>
+          <div class="tab-pane" id="tab3d">
+            <div id="threeContainer"></div>
+            <div class="controls-row">
+              <label>Construction Timeline:</label>
+              <input type="range" id="timelineSlider" min="0" max="100" value="100"
+                oninput="update4DTimeline(this.value)">
+              <span class="phase-label" id="phaseLabel">✅ Phase 3: Complete</span>
+            </div>
+            <div class="controls-row">
+              <label>🎨 Wall Color:</label>
+              <input type="color" id="wallColorPicker" value="#22d3ee" oninput="changeAllWallColors(this.value)">
+              <label>Floor:</label>
+              <button class="floor-btn active" onclick="setFloor('tile',this)">Tile</button>
+              <button class="floor-btn" onclick="setFloor('marble',this)">Marble</button>
+              <button class="floor-btn" onclick="setFloor('wood',this)">Wood</button>
+              <label style="margin-left:8px"><input type="checkbox" onchange="toggleFurniture(this.checked)">
+                Furniture</label>
+            </div>
+          </div>
+          <div class="tab-pane" id="tabCost">
+            <div id="costReportContent">
+              <p style="text-align:center;color:var(--muted);padding:60px">Click "Generate Total Cost Estimate" after
+                building your 3D model.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT PANEL -->
+      <div class="panel" id="rightPanel">
+        <div class="panel-title">Wall Analysis</div>
+        <div class="wall-analysis" id="wallAnalysis">
+          <div class="wall-default">
+            <div class="wd-icon">🖱️</div>
+            <p>Click any wall in the 3D model to see material recommendations and pricing</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODALS -->
+  <div class="modal-overlay" id="roomModal">
+    <div class="modal">
+      <button class="modal-close" onclick="document.getElementById('roomModal').classList.remove('show')">✕</button>
+      <h2>🎨 AI Room Visualizer</h2>
+      <p style="color:var(--muted);margin-bottom:12px">Select a room to visualize:</p>
+      <div class="room-btns">
+        <button onclick="pnSelectRoom('living',this)">Living Room</button>
+        <button onclick="pnSelectRoom('bedroom1',this)">Master Bedroom</button>
+        <button onclick="pnSelectRoom('kitchen',this)">Kitchen</button>
+        <button onclick="pnSelectRoom('bathroom',this)">Bathroom</button>
+      </div>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:6px;font-weight:600">INTERIOR STYLE</p>
+      <div class="pn-style-row">
+        <div class="pn-style-chip active" onclick="pnSelectStyle('modern',this)">Modern</div>
+        <div class="pn-style-chip" onclick="pnSelectStyle('minimal',this)">Minimal</div>
+        <div class="pn-style-chip" onclick="pnSelectStyle('warm',this)">Warm</div>
+        <div class="pn-style-chip" onclick="pnSelectStyle('luxury',this)">Luxury</div>
+      </div>
+      <canvas id="roomCanvas" width="540" height="380"></canvas>
+      <button class="btn-primary" style="margin-top:12px" onclick="downloadRoomImage()">Download Room Preview</button>
+    </div>
+  </div>
+
+  <div class="bc-overlay" id="bcOverlay">
+    <div id="bcLoading">
+      <div class="bc-spinner"></div>
+      <p>Broadcasting structural audit to Stellar Testnet...</p>
+    </div>
+    <div class="bc-result" id="bcResult" style="display:none"></div>
+  </div>
+
+  <!-- Backend Logic -->
+  <script src="../src/app.js"></script>
+
+  <!-- ══ Archlab PLUS ADDITIONS — New UI Elements ══ -->
+
+  <!-- Toast Notification -->
+  <div id="pn-toast"></div>
+
+  <!-- ══ MATERIAL PRICES SIDE PANEL ══ -->
+  <div id="pn-prices-panel">
+    <div class="pn-panel-hdr">
+      <span class="pn-panel-title">💰 Set Material Prices</span>
+      <button class="pn-close-btn" onclick="pnClosePrices()">✕ Close</button>
+    </div>
+    <p style="font-size:12px;color:#64748b;margin-bottom:14px">Edit prices by region. Changes apply to all cost
+      calculations instantly.</p>
+    <div class="pn-region-row" id="pn-region-row"></div>
+    <div id="pn-mat-form"></div>
+    <div class="pn-price-preview">
+      <div class="pn-pp-title">Live Preview</div>
+      <div id="pn-pp-list"></div>
+    </div>
+    <button class="pn-save-btn" onclick="pnSavePrices()">✅ Save &amp; Apply Prices</button>
+    <button class="pn-reset-btn" onclick="pnResetPrices()">↩ Reset to Region Defaults</button>
+  </div>
+
+  <!-- ══ 8-MATERIAL AI ANALYSIS MODAL ══ -->
+  <div id="pn-analysis-modal" onclick="if(event.target===this)pnCloseAnalysis()">
+    <div class="pn-modal-inner">
+      <div class="pn-modal-hdr">
+        <div>
+          <h2>⚖️ AI Wall Analysis — 8-Material Tradeoff Engine</h2>
+          <p style="font-size:12px;color:#64748b;margin-top:4px">Ranked options per wall using Weighted Tradeoff Formula
+          </p>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex-shrink:0">
+          <div class="pn-formula">⚖️ Score = (S×Ws + D×Wd) / C×Wc <span>S=Strength D=Durability C=Cost</span></div>
+          <button class="pn-close-btn" onclick="pnCloseAnalysis()">✕ Close</button>
+        </div>
+      </div>
+      <div class="pn-analysis-grid" id="pn-analysis-grid"></div>
+    </div>
+  </div>
+
+  <!-- ══ BLOCKCHAIN FULL MODAL ══ -->
+  <div id="pn-bc-modal" onclick="if(event.target===this)pnCloseBcModal()">
+    <div class="pn-bc-inner">
+      <div class="pn-bc-main" id="pn-bc-action">
+        <div class="pn-bc-icon">⛓️</div>
+        <h3 style="font-size:1.2rem;font-weight:800;margin-bottom:8px">Ready to Verify</h3>
+        <p style="color:#64748b;font-size:13px;margin-bottom:20px">Generate a SHA-256 hash of your complete structural
+          audit data and broadcast it to Stellar Testnet for immutable verification.</p>
+        <button class="btn-primary" style="font-size:15px;padding:13px 28px" onclick="pnVerifyStellar()">⛓️ Verify on
+          Stellar Network</button>
+        <button class="pn-close-btn"
+          style="margin-top:12px;display:block;width:fit-content;margin-left:auto;margin-right:auto"
+          onclick="pnCloseBcModal()">Close</button>
+      </div>
+      <div>
+        <div class="pn-bc-summary">
+          <h4>Project Summary</h4>
+          <div id="pn-bc-project-summary"></div>
+        </div>
+        <div id="pn-bc-hash-section" style="display:none;margin-top:14px">
+          <div style="background:#1e293b;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:16px">
+            <div
+              style="font-size:12px;color:#22d3ee;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">
+              Hash &amp; Metadata</div>
+            <div class="pn-bc-hash" id="pn-bc-hash-display"></div>
+            <div id="pn-bc-meta-rows"></div>
+            <a href="https://stellar.expert/explorer/testnet" target="_blank"
+              style="display:block;margin-top:12px;color:#22d3ee;font-size:12px">View on Stellar Explorer →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../src/pn-plus.js"></script>
+</body>
+
+</html>
